@@ -17,7 +17,8 @@ var controls = new THREE.VRControls(camera);
 var geometry = new t3.PlaneGeometry(1, 1);
 var material = new t3.MeshLambertMaterial({color: 'red'});
 
-var light = new t3.HemisphereLight( 0xffffbb, 0x080820, 1 );
+// var light = new t3.HemisphereLight( 0xffffff, 0x080820, 1 );
+var light = new THREE.AmbientLight( 0xf0f0f0 );
 scene.add(light);
 
 var l = 100;
