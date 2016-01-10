@@ -78,18 +78,6 @@ for( var i = 0 ; i < noOfTiles; i++) {
 
 }
 
-// scene.updateMatrixWorld();
-
-
-
-
-
-/*var tween = new TWEEN.Tween( tiles[0].scale ).to( { y: 2 }, 3000 ).easing(
- TWEEN.Easing.Cubic.Out ).start();
-	tween.onUpdate(function(){
-		
-	})*/
-
 function scaleUp(tile) {
 	new TWEEN
 	.Tween( tile.scale )
@@ -107,68 +95,29 @@ function scaleDown(tile) {
 }
 
 
+// Spherecial SkyBox
+var boxWidth = 500;
+var loader = new THREE.TextureLoader();
+loader.load('img/sky1.png', onTextureLoaded);
 
-function render() {
-	
-	// console.log(camera.rotation.x);
+function onTextureLoaded(texture) {
+  /*texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(boxWidth, boxWidth);*/
 
-	// console.log(tiles[0].rotation);
+  var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    color: 0xFFFFFF,
+    side: THREE.BackSide
+  });
 
-
-	/*var startPoint = new THREE.Vector3(0, 0, 0);
-	var direction = camera.getWorldDirection(); //new t3.Vector3(0,0,1);
-
-	var ray = new THREE.Raycaster(startPoint, direction); 
-	ray.setFromCamera( direction, camera );
-
-	var rayIntersects = ray.intersectObjects(tiles, false);
-	if(rayIntersects.length > 0) {
-		scaleUp(rayIntersects[0].object);
-		for( var i = 0; i < tiles.length; i++ ) {
-			if( tiles[i].position.x != rayIntersects[0].object.position.x && 
-				tiles[i].position.y != rayIntersects[0].object.position.y && 
-				tiles[i].position.z != rayIntersects[0].object.position.z ) {
-
-				scaleDown(tiles[i]);	
-			}	
-		}
-	} else {
-		
-	}*/
-
-	/*for( var i = 0; i < tiles.length; i++ ) {
-		var intersections = ray.intersectObject(tiles[i], false);
-		if(intersections.length > 0) {
-			scaleUp(tiles[i]);
-		} else {
-			scaleDown(tiles[i]);	
-		}
-		
-	}	*/
-
-	// console.log(rayIntersects);
-
-	
-	/*var angle = vector.angleTo( tiles[1].position );
-	console.log(angle);*/
-
-	//scaleUp(tiles[0]);
-	//console.log(tiles[0].direction);
-	/*console.log(vector);
-	vector.applyQuaternion(camera.quaternion);*/	
-
-	/*for( var i = 0; i < tiles.length; i++ ) {
-		var angle = vector.angleTo( tiles[i].position );
-		console.log( i + ' => ' + angle);
-		if( angle >= 0 && angle < 0.5) {
-			scaleUp(tiles[i]);
-		} else {
-			// scaleDown(tiles[i]);
-		}
-	}*/
+  var skybox = new THREE.Mesh(geometry, material);
+  scene.add(skybox);
+}
 
 
-
+function render() {	
 	requestAnimationFrame(render);
 	TWEEN.update();
 	controls.update();
