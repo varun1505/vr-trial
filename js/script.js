@@ -6,7 +6,7 @@ var height = window.innerHeight;
 var t3 = THREE;
 
 var scene = new t3.Scene();
-var camera = new t3.PerspectiveCamera(70, width/height, 1, 10000);
+var camera = new t3.PerspectiveCamera(70, width/height, 0.1, 10000);
 
 var renderer = new t3.WebGLRenderer();
 renderer.setSize(width, height);
@@ -16,21 +16,40 @@ var effect = new THREE.VREffect(renderer);
 var manager = new WebVRManager(renderer, effect);
 var controls = new THREE.VRControls(camera);
 
+var reticle = vreticle.Reticle(camera);
+scene.add(camera);
+
 var light = new THREE.AmbientLight( 0xf0f0f0 );
 scene.add(light);
+
 
 var createTile = function(x, y, z, imageUrl, link) {
   	var geometry = new t3.PlaneGeometry(1, 1);
 	// var material = new t3.MeshLambertMaterial({color: 'red'});
 
 	THREE.ImageUtils.crossOrigin = '';
-	// var texture = THREE.ImageUtils.loadTexture('https://unsplash.it/128/128/?random&time=' + new Date().getTime() + Math.random());
-	var texture = THREE.ImageUtils.loadTexture('http://10.0.0.9:8080/img/box.png');
+	var texture = THREE.ImageUtils.loadTexture('https://unsplash.it/128/128/?random&time=' + new Date().getTime() + Math.random());
+	// var texture = THREE.ImageUtils.loadTexture('http://10.0.0.9:8080/img/box.png');
 	
 	var material = new t3.MeshBasicMaterial({map: texture});
 	var tile = new t3.Mesh(geometry, material);
 	tile.position.set(x, y, z);
 	tile.lookAt(new t3.Vector3(0,0,0));
+
+	reticle.add_collider(tile);
+
+	tile.ongazelong = function() {
+		scaleUp(this);
+	}
+	tile.ongazeover = function() {
+		scaleUp(this);
+	}
+	tile.ongazeout = function() {
+		scaleDown(this);
+	}
+
+	
+
 	scene.add(tile);
 	return tile;
 }
@@ -74,7 +93,7 @@ for( var i = 0 ; i < noOfTiles; i++) {
 function scaleUp(tile) {
 	new TWEEN
 	.Tween( tile.scale )
-	.to( { x: 1.5, y: 1.5 }, 1000 )
+	.to( { x: 1.5, y: 1.5 }, 500 )
 	.easing( TWEEN.Easing.Exponential.InOut )
 	.start();	
 }
@@ -82,13 +101,12 @@ function scaleUp(tile) {
 function scaleDown(tile) {
 	new TWEEN
 	.Tween( tile.scale )
-	.to( { x: 1, y: 1 }, 1000 )
+	.to( { x: 1, y: 1 }, 500 )
 	.easing( TWEEN.Easing.Exponential.InOut )
 	.start();
 }
 
 
-var raycaster = new THREE.Raycaster();
 
 function render() {
 	
@@ -96,10 +114,13 @@ function render() {
 
 	// console.log(tiles[0].rotation);
 
-	var startPoint = new THREE.Vector3(0, 0, 0);
+
+	/*var startPoint = new THREE.Vector3(0, 0, 0);
 	var direction = camera.getWorldDirection(); //new t3.Vector3(0,0,1);
 
 	var ray = new THREE.Raycaster(startPoint, direction); 
+	ray.setFromCamera( direction, camera );
+
 	var rayIntersects = ray.intersectObjects(tiles, false);
 	if(rayIntersects.length > 0) {
 		scaleUp(rayIntersects[0].object);
@@ -109,11 +130,11 @@ function render() {
 				tiles[i].position.z != rayIntersects[0].object.position.z ) {
 
 				scaleDown(tiles[i]);	
-			}			
+			}	
 		}
 	} else {
 		
-	}
+	}*/
 
 	/*for( var i = 0; i < tiles.length; i++ ) {
 		var intersections = ray.intersectObject(tiles[i], false);
@@ -151,6 +172,7 @@ function render() {
 	requestAnimationFrame(render);
 	TWEEN.update();
 	controls.update();
+	reticle.reticle_loop();
 	manager.render(scene, camera);
 }
 render();
