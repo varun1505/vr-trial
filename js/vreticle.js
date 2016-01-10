@@ -6,7 +6,8 @@ vreticle.Reticle = function(camera) {
 
     var new_reticle = {};
     new_reticle.default_material = function() {
-        return new THREE.MeshNormalMaterial();
+        // return new THREE.MeshNormalMaterial();
+        return new THREE.MeshPhongMaterial( { color: 'white', side: THREE.DoubleSide } );
     }
     new_reticle.get_random_hex_color = function() {
 	    return '#'+('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
@@ -29,6 +30,10 @@ vreticle.Reticle = function(camera) {
         });
     };
 
+    /*new_reticle.set_as_inactive = function() {
+
+    }*/
+
     new_reticle.create_default_object = function(position_in, face_camera, side_length, image_url_in, sphere) {
         if (side_length == undefined) {
             side_length = .2;
@@ -47,6 +52,33 @@ vreticle.Reticle = function(camera) {
         } else {
             var default_geometry = new THREE.BoxGeometry(side_length, side_length, side_length);
         }
+
+        // Override by @varun1505
+
+        var circleRadius = 0.01;
+        var holeRadius = 0.6 * circleRadius;
+
+        var arcShape = new THREE.Shape();
+        arcShape.moveTo( circleRadius, 0 );
+        arcShape.absarc( 0, 0, circleRadius, 0, Math.PI * 2, false );
+
+        var holePath = new THREE.Path();
+        holePath.moveTo( holeRadius, 0 );
+        // holeRadius = 0.008;
+        holePath.absarc( 0, 0, holeRadius, 0, Math.PI*2, true );
+        arcShape.holes.push( holePath );
+
+        default_geometry = new THREE.ShapeGeometry(arcShape);
+
+
+        temp_material = new THREE.MeshPhongMaterial( { color: 'white' } );
+
+        
+
+
+
+        // End Override by @varun1505
+
         var default_object = new THREE.Mesh(default_geometry, temp_material);
         default_object.position.x = position_in.x;
         default_object.position.y = position_in.y;
@@ -133,7 +165,10 @@ vreticle.Reticle = function(camera) {
             this.reticle_hit_time = this.clock.getElapsedTime();
             //is the hit object gazeable
             if (this.reticle_hit_object.gazeable) {
-                this.reticle_object.material = this.get_random_hex_material();
+                
+                // @varun1505 comment
+                // this.reticle_object.material = this.get_random_hex_material();
+                
                 //check if there's a gazing object
                 if (this.gazing_object != null) {
                     //if the gazing object is the same as the hit object: check to see if the elapsed time exceeds the hover duration
