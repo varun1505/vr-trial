@@ -22,7 +22,6 @@ scene.add(camera);
 var light = new THREE.AmbientLight( 0xf0f0f0 );
 scene.add(light);
 
-
 var createTile = function(x, y, z, imageUrl, link) {
   	var geometry = new t3.PlaneGeometry(1, 1);
 	// var material = new t3.MeshLambertMaterial({color: 'red'});
@@ -48,7 +47,6 @@ var createTile = function(x, y, z, imageUrl, link) {
 		scaleDown(this);
 	}
 
-	
 
 	scene.add(tile);
 	return tile;
@@ -101,9 +99,6 @@ var loader = new THREE.TextureLoader();
 loader.load('img/sky1.png', onTextureLoaded);
 
 function onTextureLoaded(texture) {
-  /*texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(boxWidth, boxWidth);*/
 
   var geometry = new THREE.SphereGeometry(boxWidth, boxWidth, boxWidth);
   var material = new THREE.MeshBasicMaterial({
