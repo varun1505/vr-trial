@@ -59,7 +59,7 @@ var radius = 6;
 var tiles = [];
 for( var i = 0 ; i < noOfTiles; i++) {
   
-	var angle = 15 * i * Math.PI / 180;
+	// var angle = 15 * i * Math.PI / 180;
 
 	var phi = Math.acos( -1 + ( 2 * i ) / noOfTiles );
 	var theta = Math.sqrt( noOfTiles * Math.PI ) * phi;
